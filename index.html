@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Finanze">
+<meta name="theme-color" content="#1F4E79">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%233E7FC1'/%3E%3Cstop offset='0.55' stop-color='%231F4E79'/%3E%3Cstop offset='1' stop-color='%2312314F'/%3E%3C/linearGradient%3E%3ClinearGradient id='c' x1='0' y1='0' x2='0.6' y2='1'%3E%3Cstop offset='0' stop-color='%23FFFFFF'/%3E%3Cstop offset='1' stop-color='%23CDE4FA'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='180' height='180' rx='40' fill='url(%23g)'/%3E%3Ccircle cx='90' cy='94' r='52' fill='none' stroke='url(%23c)' stroke-width='7' opacity='0.95'/%3E%3Ccircle cx='90' cy='94' r='41' fill='%23FFFFFF' opacity='0.10'/%3E%3Ctext x='90' y='118' font-family='Helvetica,Arial,sans-serif' font-size='62' font-weight='bold' text-anchor='middle' fill='url(%23c)'%3E€%3C/text%3E%3Cpath d='M52 133 L74 112 L92 122 L128 78' fill='none' stroke='%238FD3A0' stroke-width='9' stroke-linecap='round' stroke-linejoin='round' opacity='0.95'/%3E%3Ccircle cx='130' cy='74' r='11' fill='%238FD3A0'/%3E%3C/svg%3E">
+<style>
+:root{--blu:#1F4E79;--blu2:#3b7ec4;--chiaro:#DDEBF7;--bg:#F2F2F7;--card:#fff;--txt:#1c1c1e;--sub:#6e6e73;--ok:#1e8e3e;--warn:#f29900;--ko:#d93025;--bord:#e5e5ea}
+@media (prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--txt:#f2f2f7;--sub:#98989f;--chiaro:#16324d;--bord:#38383a;--blu2:#64a8ff}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Helvetica,sans-serif;background:var(--bg);color:var(--txt);padding-bottom:calc(74px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(10px + env(safe-area-inset-top)) 16px 8px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+h1{font-size:30px;margin:0}
+h2{font-size:13px;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;margin:22px 16px 6px;font-weight:600}
+.card{background:var(--card);border-radius:12px;margin:0 16px;overflow:hidden}
+.row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--bord);gap:10px}
+.row:last-child{border-bottom:0}
+.row.tap{cursor:pointer}
+.row .l{flex:1;min-width:0}
+.row .t{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .s{font-size:13px;color:var(--sub);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.pos{color:var(--ok)}.neg{color:var(--ko)}
+.big{font-size:36px;font-weight:700;padding:14px;font-variant-numeric:tabular-nums}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 16px}
+.tile{background:var(--card);border-radius:12px;padding:12px}
+.tile .s{font-size:13px;color:var(--sub)}.tile .v{font-size:20px;margin-top:4px;font-variant-numeric:tabular-nums}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--bord);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:10}
+nav button{flex:1;background:none;border:0;padding:8px 0 6px;font-size:11px;color:var(--sub);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button span{font-size:22px;line-height:1}
+nav button.on{color:var(--blu2)}
+.fab{position:fixed;right:18px;bottom:calc(86px + env(safe-area-inset-bottom));width:58px;height:58px;border-radius:29px;background:var(--blu);color:#fff;font-size:32px;border:0;box-shadow:0 4px 14px rgba(0,0,0,.25);z-index:9;line-height:1}
+.btn{background:var(--blu);color:#fff;border:0;border-radius:10px;padding:12px 16px;font-size:16px;font-weight:600;width:100%}
+.btn.sec{background:var(--chiaro);color:var(--blu)}
+@media (prefers-color-scheme:dark){.btn.sec{color:var(--blu2)}}
+.btn.del{background:none;color:var(--ko)}
+.hbtn{background:none;border:0;color:var(--blu2);font-size:16px}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;z-index:20;align-items:flex-end}
+.sheet.on{display:flex}
+.panel{background:var(--bg);width:100%;max-height:92vh;overflow:auto;border-radius:14px 14px 0 0;padding:16px 16px calc(20px + env(safe-area-inset-bottom))}
+.panel h3{margin:0 0 12px;font-size:20px;display:flex;justify-content:space-between;align-items:center}
+label{display:block;font-size:13px;color:var(--sub);margin:10px 2px 4px}
+input,select{width:100%;padding:11px 12px;font-size:16px;border:1px solid var(--bord);border-radius:10px;background:var(--card);color:var(--txt);-webkit-appearance:none;appearance:none}
+.seg{display:flex;background:var(--card);border-radius:10px;padding:3px;gap:3px;border:1px solid var(--bord)}
+.seg button{flex:1;border:0;background:none;padding:8px 2px;border-radius:8px;font-size:13px;color:var(--txt)}
+.seg button.on{background:var(--blu);color:#fff}
+.bar{height:6px;background:var(--bord);border-radius:3px;margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok)}
+.bar i.w{background:var(--warn)}.bar i.x{background:var(--ko)}
+.mese{display:flex;align-items:center;gap:10px;margin:4px 16px 0}
+.mese button{background:var(--card);border:0;border-radius:8px;width:40px;height:34px;font-size:20px;color:var(--blu2)}
+.mese b{flex:1;text-align:center;font-size:17px;text-transform:capitalize}
+.empty{padding:18px;text-align:center;color:var(--sub)}
+.note{font-size:12px;color:var(--sub);margin:8px 18px;line-height:1.45}
+.chart{display:flex;align-items:flex-end;gap:4px;height:120px;padding:12px 14px 4px}
+.chart>div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:3px;height:100%}
+.chart .pair{display:flex;align-items:flex-end;justify-content:center;width:100%;height:100%;gap:2px}
+.chart i{width:42%;display:inline-block;border-radius:3px 3px 0 0;min-height:2px}
+.chart small{font-size:10px;color:var(--sub)}
+.mini{width:96px;display:inline;padding:5px 8px;font-size:14px;text-align:right}
+.hero{background:var(--blu);color:#fff;border-radius:16px;margin:0 16px;padding:18px}
+.hero .s{font-size:13px;opacity:.85}
+.hero .v{font-size:34px;margin-top:6px;font-variant-numeric:tabular-nums}
+.hero .sub{margin-top:10px;font-size:13px;opacity:.9;display:flex;gap:14px;flex-wrap:wrap}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 16px}
+.box{background:var(--card);border-radius:16px;padding:16px 14px;min-width:0}
+.box.blu{background:var(--blu);color:#fff}
+.box .s{font-size:13px;color:var(--sub)}
+.box.blu .s{color:#fff;opacity:.85}
+.box .v{font-size:26px;margin-top:6px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.box .sub{font-size:12px;color:var(--sub);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.box.blu .sub{color:#fff;opacity:.85}
+.row.sum{border-top:2px solid var(--bord);background:var(--soft);font-weight:600}
+.avviso{margin:0 16px 14px;padding:14px;border-radius:14px;background:#FFF4E5;border:1px solid #F0C48A}
+.avviso .a-t{font-weight:600;font-size:15px;margin-bottom:8px}
+.avviso .a-r{display:flex;justify-content:space-between;gap:10px;font-size:15px;padding:3px 0}
+.avviso .a-n{font-size:13px;color:#7a5a2a;margin:8px 0 10px}
+</style>
+</head>
+<body>
+<header><h1 id="titolo">Riepilogo</h1><button class="hbtn" id="hdrBtn"></button></header>
+<main id="app"></main>
+<button class="fab" id="fab" aria-label="Aggiungi">+</button>
+<nav id="nav"></nav>
+<div class="sheet" id="sheet"><div class="panel" id="panel"></div></div>
+
+<script>
+"use strict";
+/* ============================================================
+   FINANZE — app per iPhone (file singolo, dati su questo telefono)
+   ============================================================ */
+
+const KEY = "finanze-v2";
+const CAT_USCITA = ["Spesa alimentare","Casa","Auto","Telefonia","Salute","Svago","Abbigliamento",
+                    "Istruzione","Assicurazioni","Tasse","Carte di credito","Altro"];
+const CAT_ENTRATA = ["Stipendio","Altro reddito"];
+const CADENZE = {Mensile:1,Bimestrale:2,Trimestrale:3,Semestrale:6,Annuale:12};
+const TIPI = {conto:"Conto",carta:"Carta di credito",prepagata:"Carta prepagata",
+              libretto:"Libretto",fondo:"Fondo risparmio"};
+
+function defaultData(){
+  return {
+    conti:[
+      {id:"cc",  nome:"Conto corrente principale",tipo:"conto",    iniziale:0},
+      {id:"c1",  nome:"Carta BCC",                tipo:"carta",    iniziale:0, plafond:null, giorno:15, da:"cc", ciclo:14},
+      {id:"c2",  nome:"Carta Amex",               tipo:"carta",    iniziale:0, plafond:null, giorno:27, da:"cc", ciclo:15},
+      {id:"prep",nome:"Carta prepagata",          tipo:"prepagata",iniziale:0},
+      {id:"lib", nome:"Libretto parallelo",       tipo:"libretto", iniziale:0},
+      {id:"fondo",nome:"Fondo risparmio",         tipo:"fondo",    iniziale:0, obiettivo:null}
+    ],
+    movimenti:[],
+    fisse:[],
+    budget:Object.fromEntries(CAT_USCITA.map(c=>[c,0]))
+  };
+}
+let D;
+try{ D = JSON.parse(localStorage.getItem(KEY)) || defaultData(); }catch(e){ D = defaultData(); }
+// migrazione da una versione precedente, se esiste
+try{ const old = JSON.parse(localStorage.getItem("finanze-v1")); if(old && old.conti && !localStorage.getItem(KEY)){ D = old; } }catch(e){}
+function salva(){ try{ localStorage.setItem(KEY, JSON.stringify(D)); }catch(e){ alert("Impossibile salvare: memoria del browser piena."); } }
+
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const eur = n => (Math.abs(n)<0.005?0:n).toLocaleString("it-IT",{style:"currency",currency:"EUR",maximumFractionDigits:2});
+const oggi = () => { const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
+const conto = id => D.conti.find(c=>c.id===id) || {nome:"?"};
+const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const n2 = v => parseFloat(String(v??"").replace(",",".")) || 0;
+let meseSel = oggi().slice(0,7);
+const nelMese = (m,ym) => (m.data||"").slice(0,7)===ym;
+function nomeMese(ym,breve){ const [y,m]=ym.split("-"); return new Date(y,m-1,1).toLocaleDateString("it-IT",breve?{month:"long"}:{month:"long",year:"numeric"}); }
+function spostaMese(ym,d){ const [y,m]=ym.split("-").map(Number); const t=new Date(y,m-1+d,1); return t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0"); }
+const dataIT = s => { const [y,m,d]=s.split("-"); return `${d}/${m}/${y}`; };
+
+function saldo(id){
+  const c = conto(id); let s = c.iniziale||0;
+  for(const m of D.movimenti){
+    if(m.tipo==="entrata" && m.conto===id) s+=m.importo;
+    if(m.tipo==="uscita"  && m.conto===id) s-=m.importo;
+    if(m.tipo==="giroconto"){ if(m.a===id) s+=m.importo; if(m.da===id) s-=m.importo; }
+  }
+  return s;
+}
+function totali(ym){
+  let ent=0,usc=0;
+  for(const m of D.movimenti) if(nelMese(m,ym)){
+    if(m.tipo==="entrata") ent+=m.importo;
+    if(m.tipo==="uscita")  usc+=m.importo;
+  }
+  return {ent,usc,netto:ent-usc};
+}
+const attive = () => D.fisse.filter(f=>f.attiva);
+const fisseMensili = () => attive().reduce((a,f)=>a+(f.importo||0)/(CADENZE[f.cadenza]||1),0);
+const versatoNelMese = (id,ym) => D.movimenti.filter(m=>m.tipo==="giroconto"&&m.a===id&&nelMese(m,ym)).reduce((a,m)=>a+m.importo,0);
+const speseMese = ym => { const o={}; for(const m of D.movimenti) if(m.tipo==="uscita"&&nelMese(m,ym)) o[m.categoria]=(o[m.categoria]||0)+m.importo; return o; };
+const liquidita = () => D.conti.filter(c=>c.tipo!=="carta").reduce((a,c)=>a+saldo(c.id),0);
+const debitoCarte = () => D.conti.filter(c=>c.tipo==="carta").reduce((a,c)=>a+Math.max(0,-saldo(c.id)),0);
+const movCarta = id => D.movimenti.filter(m => m.tipo==="uscita" && m.conto===id);
+function spesoDa(id, dalISO, aISO){
+  return movCarta(id).filter(m => m.data >= dalISO && m.data <= aISO).reduce((a,m)=>a+m.importo,0);
+}
+const rimborsato = id => D.movimenti.filter(m=>m.tipo==="giroconto" && m.a===id).reduce((a,m)=>a+m.importo,0);
+const debCarta = c => Math.max(0, (c.iniziale||0) + movCarta(c.id).reduce((a,m)=>a+m.importo,0) - rimborsato(c.id));
+/* periodo di riferimento: dal giorno di ciclo del mese prima al giorno di ciclo
+   del mese del pagamento. BCC (ciclo 0), Amex (ciclo 15). */
+function periodoCarta(c, dataPagamento){
+  const p = dataPagamento.split("-").map(Number), y = p[0], m = p[1];
+  const iso = (yy,mm,gg) => yy + "-" + String(mm).padStart(2,"0") + "-" + String(gg).padStart(2,"0");
+  const g = c.ciclo || 0;
+  let da, a;
+  if(g === 0){                 /* il mese civile del pagamento */
+    da = iso(y,m,1);
+    a = iso(y,m,new Date(y,m,0).getDate());
+  } else if(g === -1){         /* il mese precedente al pagamento */
+    const mP = m===1 ? 12 : m-1, yP = m===1 ? y-1 : y;
+    da = iso(yP,mP,1);
+    a = iso(yP,mP,new Date(yP,mP,0).getDate());
+  } else {
+    const mPrec = m===1 ? 12 : m-1, yPrec = m===1 ? y-1 : y;
+    da = iso(yPrec,mPrec,Math.min(g,new Date(yPrec,mPrec,0).getDate()));
+    a = iso(y,m,Math.min(g,new Date(y,m,0).getDate()));
+  }
+  if(a > oggi()) a = oggi();
+  return {da, a};
+}
+/* --- movimenti automatici: spese fisse e saldo carte --- */
+const MESI = {Mensile:1,Bimestrale:2,Trimestrale:3,Semestrale:6,Annuale:12};
+const meseCivile = ym => { const [y,m]=ym.split("-").map(Number); return y*12+(m-1); };
+function dataScadenza(f,ym){
+  const [y,m] = ym.split("-").map(Number);
+  const ultimo = new Date(y, m, 0).getDate();
+  const gg = String(Math.min(Number(f.giorno)||1, ultimo)).padStart(2,"0");
+  return y + "-" + String(m).padStart(2,"0") + "-" + gg;
+}
+function fisseDi(ym){
+  const out = [];
+  for(const f of D.fisse){
+    if(!f.attiva || !f.giorno) continue;
+    const passo = MESI[f.cadenza] || 1;
+    const da = f.dal ? meseCivile(f.dal) : null;
+    let m = meseCivile(ym);
+    if(da !== null){
+      if(da > m) continue;
+      if((m - da) % passo !== 0) continue;
+    }
+    const data = dataScadenza(f, ym);
+    if(data > oggi()) continue;
+    out.push({fissa:f, data, quando:dataIT(data), importo:Number(f.importo)||0});
+  }
+  return out;
+}
+const fisseDaRegistrare = ym => fisseDi(ym).filter(a=>!D.movimenti.some(m=>m.fissa===a.fissa.id && (m.data||"").slice(0,7)===ym));
+function registraFissa(f,ym){
+  const [y,m] = ym.split("-").map(Number);
+  const data = dataScadenza(f, ym);
+  if(data > oggi()) return null;
+  const mov = {id:uid(), tipo:"uscita", data, conto:f.conto||"cc", categoria:f.categoria,
+    importo:Number(f.importo)||0, descrizione:f.voce, fissa:f.id};
+  D.movimenti.push(mov); salva(); return mov;
+}
+function addebitiDi(ym){
+  const [y,m] = ym.split("-").map(Number);
+  const out = [];
+  for(const c of D.conti.filter(c=>c.tipo==="carta" && c.giorno)){
+    const ultimo = new Date(y, m, 0).getDate();
+    const gg = String(Math.min(c.giorno, ultimo)).padStart(2,"0");
+    const data = y + "-" + String(m).padStart(2,"0") + "-" + gg;
+    if(data > oggi()) continue;
+    const per = periodoCarta(c, data);
+    const deb = spesoDa(c.id, per.da, per.a);
+    if(deb < 0.005) continue;
+    out.push({carta:c, data, debito:deb, da:c.da||"cc", periodo:per});
+  }
+  return out;
+}
+const daRegistrare = ym => addebitiDi(ym).filter(a=>!D.movimenti.some(m=>m.addebito===a.carta.id && (m.data||"").slice(0,7)===ym));
+function addebita(c,ym){
+  const [y,m] = ym.split("-").map(Number);
+  const ultimo = new Date(y, m, 0).getDate();
+  const gg = String(Math.min(c.giorno, ultimo)).padStart(2,"0");
+  const data = y + "-" + String(m).padStart(2,"0") + "-" + gg;
+  if(data > oggi()) return null;
+  const per = periodoCarta(c, data);
+  const deb = spesoDa(c.id, per.da, per.a);
+  if(deb < 0.005) return null;
+  const etichetta = per.da.slice(8,10)+"/"+per.da.slice(5,7)+"-"+per.a.slice(8,10)+"/"+per.a.slice(5,7);
+  const mov = {id:uid(), tipo:"giroconto", data, da:c.da||"cc", a:c.id, importo:deb,
+    descrizione:"Addebito "+c.nome, addebito:c.id, periodo:etichetta};
+  D.movimenti.push(mov); salva();
+  return mov;
+}
+/* soldi "sul conto": tutto tranne fondo risparmio e libretto, al netto del debito carte */
+const disponibilita = () => D.conti.filter(c=>c.tipo!=="fondo"&&c.tipo!=="libretto"&&c.tipo!=="carta").reduce((a,c)=>a+saldo(c.id),0) - debitoCarte();
+const patrimonio = () => D.conti.reduce((a,c)=>a+saldo(c.id),0);
+
+/* ---------- navigazione ---------- */
+const TABS = [
+  {id:"home",  t:"Riepilogo",  i:"◉"},
+  {id:"mov",   t:"Movimenti",  i:"≡"},
+  {id:"conti", t:"Conti",      i:"▣"},
+  {id:"fisse", t:"Fisse",      i:"↻"},
+  {id:"budget",t:"Budget",     i:"◔"}
+];
+let tab="home";
+function renderNav(){
+  document.getElementById("nav").innerHTML = TABS.map(x=>
+    `<button class="${x.id===tab?"on":""}" data-tab="${x.id}"><span>${x.i}</span>${x.t}</button>`).join("");
+}
+document.getElementById("nav").onclick = e => { const b=e.target.closest("button"); if(b){ tab=b.dataset.tab; render(); window.scrollTo(0,0); } };
+function meseBar(){ return `<div class="mese"><button data-m="-1" aria-label="Mese prima">‹</button><b>${nomeMese(meseSel)}</b><button data-m="1" aria-label="Mese dopo">›</button></div>`; }
+
+document.getElementById("app").addEventListener("click", e=>{
+  const b=e.target.closest("[data-m]");
+  if(b){ meseSel=spostaMese(meseSel,+b.dataset.m); render(); return; }
+  const r=e.target.closest("[data-edit]");
+  if(r){ const [k,id]=r.dataset.edit.split(":"); ({mov:formMovimento,fissa:formFissa,conto:formConto})[k](id); return; }
+  const rg=e.target.closest("[data-registra]");
+  if(rg){
+    if(rg.dataset.registra==="fisse"){
+      const fatte = fisseDaRegistrare(meseSel);
+      if(!fatte.length){ alert("Non c'è nulla da registrare."); return; }
+      const tot = fatte.reduce((a,x)=>a+x.importo,0);
+      if(confirm("Registrare " + fatte.length + " spese fisse per " + eur(tot) + "? Ogni movimento prende la data di scadenza.")){
+        fatte.forEach(x=>registraFissa(x.fissa,meseSel)); render();
+      }
+    } else {
+      const fatte = daRegistrare(meseSel);
+      if(!fatte.length){ alert("Non c'è nulla da registrare."); return; }
+      const tot = fatte.reduce((a,x)=>a+x.debito,0);
+      if(confirm("Registrare l'addebito di " + fatte.map(x=>x.carta.nome).join(" e ") + " per " + eur(tot) + "? L'importo viene scalato dal conto il giorno indicato.")){
+        fatte.forEach(x=>addebita(x.carta,meseSel)); render();
+      }
+    }
+    return;
+  }
+  const v=e.target.closest("[data-vai]");
+  if(v){ tab=v.dataset.vai; render(); window.scrollTo(0,0); }
+});
+document.getElementById("fab").onclick = () => { if(tab==="fisse") formFissa(); else formMovimento(); };
+
+function render(){
+  renderNav();
+  document.getElementById("titolo").textContent = TABS.find(x=>x.id===tab).t;
+  const hb = document.getElementById("hdrBtn");
+  hb.textContent = tab==="home" ? "⋯" : "";
+  hb.onclick = tab==="home" ? formMenu : null;
+  document.getElementById("fab").style.display = (tab==="conti"||tab==="budget") ? "none" : "block";
+  document.getElementById("app").innerHTML = ({home:vHome,mov:vMov,conti:vConti,fisse:vFisse,budget:vBudget})[tab]();
+}
+
+/* ---------- RIEPILOGO ---------- */
+function vHome(){
+  const scadF = fisseDaRegistrare(meseSel), scadC = daRegistrare(meseSel);
+  const avviso = (scadF.length || scadC.length) ? `<div class="avviso">
+    <div class="a-t">Da registrare in ${nomeMese(meseSel,true)}</div>
+    ${scadF.map(a=>`<div class="a-r"><span>${esc(a.fissa.voce)} · ${a.quando}</span><b>−${eur(a.importo)}</b></div>`).join("")}
+    ${scadC.map(a=>`<div class="a-r"><span>${esc(a.carta.nome)} · saldo del ${a.data.slice(8,10)}/${meseSel.slice(5,7)}<br><small>spese dal ${dataIT(a.periodo.da)} al ${dataIT(a.periodo.a)}</small></span><b>−${eur(a.debito)}</b></div>`).join("")}
+    <p class="a-n">Il giorno indicato è passato: registra ora, così i saldi sono aggiornati.</p>
+    <div class="a-b">
+      ${scadF.length?`<button class="btn" data-registra="fisse">Registra spese fisse (${scadF.length})</button>`:""}
+      ${scadC.length?`<button class="btn sec" data-registra="carte">Registra carte (${scadC.length})</button>`:""}
+    </div>
+  </div>` : "";
+  const t = totali(meseSel), fm = fisseMensili();
+  const liq = liquidita(), deb = debitoCarte(), patr = patrimonio();
+  const disp = disponibilita();
+  const saldoFondo = saldo("fondo"), saldoLib = saldo("lib");
+  const saldoCC = saldo("cc");
+  const messo = versatoNelMese("fondo",meseSel) + versatoNelMese("lib",meseSel);
+  const prep = D.conti.filter(c=>c.tipo==="prepagata").reduce((a,c)=>a+saldo(c.id),0);
+  const dettaglio = D.conti.filter(c=>c.tipo!=="fondo"&&c.tipo!=="libretto");
+  const quota = v => patr ? Math.round(v/patr*100) : 0;
+  const mesi=[]; for(let i=5;i>=0;i--) mesi.push(spostaMese(meseSel,-i));
+  const dati=mesi.map(m=>totali(m)); const max=Math.max(1,...dati.flatMap(d=>[d.ent,d.usc]));
+  // primi 3 movimenti del mese
+  const ultimi = D.movimenti.filter(m=>nelMese(m,meseSel)).sort((a,b)=>b.data.localeCompare(a.data)).slice(0,4);
+  const carte = D.conti.filter(c=>c.tipo==="carta");
+  return `${meseBar()}
+  ${avviso}
+  <div class="duo">
+    <div class="box blu">
+      <div class="s">Sul conto corrente</div>
+      <div class="v">${eur(saldoCC)}</div>
+      <div class="sub">Carta prepagata ${eur(prep)}</div>
+    </div>
+    <div class="box">
+      <div class="s">Patrimonio</div>
+      <div class="v">${eur(patr)}</div>
+      <div class="sub">Fondo ${eur(saldoFondo)} · Libretto ${eur(saldoLib)}</div>
+    </div>
+  </div>
+  <p class="note" style="margin:0 16px 14px">Il patrimonio comprende fondo e libretto. Debito carte ${eur(deb)}.</p>
+  <h2>Tutto quello che ho</h2>
+  <div class="card">
+    <div class="row"><div class="l"><div class="t">Senza fondo e libretto</div><div class="s">Conti, prepagata e carte</div></div><div class="v">${eur(disp)}</div></div>
+    <div class="row"><div class="l"><div class="t">Fondo risparmio</div><div class="s">Solo versamenti</div></div><div class="v">${eur(saldoFondo)}</div></div>
+    <div class="row"><div class="l"><div class="t">Libretto parallelo</div><div class="s">Alimentato da giroconti</div></div><div class="v">${eur(saldoLib)}</div></div>
+    <div class="row sum"><div class="l"><div class="t">Tutto</div><div class="s">Patrimonio, fondo e libretto compresi</div></div><div class="v">${eur(patr)}</div></div>
+    <p class="note" style="margin:2px 14px 10px">Fondo e libretto valgono ${quota(saldoFondo+saldoLib)}% del patrimonio.</p>
+  </div>
+  <h2>Come è composto</h2>
+  <div class="card">
+    ${dettaglio.map(c=>{const s=saldo(c.id);return `<div class="row"><div class="l"><div class="t">${esc(c.nome)}</div><div class="s">${c.tipo==="carta"?(s<0?"Debito da saldare":"Nessun debito"):TIPI[c.tipo]||c.tipo}</div></div><div class="v">${eur(s)}</div></div>`;}).join("")}
+  </div>
+  <h2>Carte di credito</h2>
+  <div class="card">
+    ${carte.map(c=>{const d=debCarta(c);const g=c.giorno?`il ${c.giorno} di ogni mese`:"giorno non impostato";
+      return `<div class="row"><div class="l"><div class="t">${esc(c.nome)}</div><div class="s">Addebito ${g}${c.da?" dal "+esc(conto(c.da).nome):""}</div></div><div class="v ${d>0?"neg":""}">${d>0?eur(d):"Saldato"}</div></div>`;}).join("")}
+  </div>
+  <h2>Questo mese</h2>
+  <div class="grid">
+    <div class="tile"><div class="s">Entrate</div><div class="v pos">${eur(t.ent)}</div></div>
+    <div class="tile"><div class="s">Uscite</div><div class="v neg">${eur(t.usc)}</div></div>
+    <div class="tile"><div class="s">Risparmio netto</div><div class="v ${t.netto<0?"neg":""}">${eur(t.netto)}</div></div>
+    <div class="tile"><div class="s">Tasso di risparmio</div><div class="v">${t.ent?Math.round(t.netto/t.ent*100):0}%</div></div>
+    <div class="tile"><div class="s">Messo da parte</div><div class="v">${eur(messo)}</div></div>
+    <div class="tile"><div class="s">Spese fisse</div><div class="v">${eur(fm)}</div></div>
+    <div class="tile"><div class="s">Prepagata</div><div class="v">${eur(prep)}</div></div>
+  </div>
+  <h2>Uscite del mese</h2>
+  <div class="card">
+    <div class="row"><div class="l"><div class="t">Fisse</div><div class="s">Ricorrenti, come telepass e cellulare</div></div><div class="v">${eur(fm)}</div></div>
+    <div class="row"><div class="l"><div class="t">Variabili</div><div class="s">Tutto il resto</div></div><div class="v">${eur(Math.max(0,t.usc-fm))}</div></div>
+    <div class="row"><div class="l"><div class="t">Incidenza fisse sulle entrate</div></div><div class="v">${t.ent?Math.round(fm/t.ent*100):0}%</div></div>
+  </div>
+  ${ultimi.length?`<h2>Ultimi movimenti</h2><div class="card">${ultimi.map(rigaMov).join("")}</div>`:""}
+  <h2>Ultimi 6 mesi</h2>
+  <div class="card"><div class="chart">${dati.map((d,i)=>`<div><div class="pair"><i style="height:${d.ent/max*100}%;background:var(--ok)"></i><i style="height:${d.usc/max*100}%;background:var(--ko)"></i></div><small>${nomeMese(mesi[i],true).slice(0,3)}</small></div>`).join("")}</div>
+  <p class="note" style="margin:0 14px 10px">Verde entrate · rosso uscite</p></div>
+  <div style="margin:16px"><button class="btn sec" data-vai="mov">Vedi tutti i movimenti</button></div>`;
+}
+
+/* ---------- MOVIMENTI ---------- */
+function rigaMov(m){
+  const d = new Date(m.data+"T12:00:00").toLocaleDateString("it-IT",{day:"2-digit",month:"short"});
+  if(m.tipo==="giroconto")
+    return `<div class="row tap" data-edit="mov:${m.id}"><div class="l"><div class="t">${esc(m.descrizione||"Giroconto")}</div>
+      <div class="s">${d} · ${esc(conto(m.da).nome)} → ${esc(conto(m.a).nome)}${m.addebito?" · addebito carta":""}</div></div><div class="v">${eur(m.importo)}</div></div>`;
+  return `<div class="row tap" data-edit="mov:${m.id}"><div class="l"><div class="t">${esc(m.descrizione||m.categoria)}</div>
+    <div class="s">${d} · ${esc(m.categoria)} · ${esc(conto(m.conto).nome)}</div></div>
+    <div class="v ${m.tipo==="entrata"?"pos":""}">${m.tipo==="entrata"?"+":"−"}${eur(m.importo)}</div></div>`;
+}
+function vMov(){
+  const lista = D.movimenti.filter(m=>nelMese(m,meseSel)).sort((a,b)=>b.data.localeCompare(a.data));
+  const t = totali(meseSel);
+  return `${meseBar()}
+  <div class="card" style="margin-top:12px">
+    <div class="row"><div class="l"><div class="t">Entrate</div></div><div class="v pos">${eur(t.ent)}</div></div>
+    <div class="row"><div class="l"><div class="t">Uscite</div></div><div class="v neg">${eur(t.usc)}</div></div>
+  </div>
+  <h2>${lista.length} moviment${lista.length===1?"o":"i"}</h2>
+  <div class="card">${lista.length?lista.map(rigaMov).join(""):`<div class="empty">Nessun movimento in ${nomeMese(meseSel)}.<br>Tocca + per aggiungerne uno.</div>`}</div>`;
+}
+
+/* ---------- CONTI ---------- */
+function vConti(){
+  const liq = liquidita(), deb = debitoCarte();
+  const gruppo = (tipo,tit) => {
+    const cs = D.conti.filter(c=>c.tipo===tipo);
+    if(!cs.length) return "";
+    return `<h2>${tit}</h2><div class="card">${cs.map(c=>{
+      const s = saldo(c.id); let sub="", barra="";
+      if(tipo==="carta"){
+        sub = Math.abs(s)<0.005 ? "Nessun debito" : `Da saldare ${eur(-s)}`;
+        if(c.plafond) sub += ` · residuo ${eur(Math.max(0,c.plafond+s))}`;
+      }
+      if(tipo==="prepagata") sub = "Si ricarica con un giroconto";
+      if(tipo==="libretto")  sub = "Alimentato da giroconti";
+      if(tipo==="fondo"){
+        sub = c.obiettivo ? `${eur(s)} di ${eur(c.obiettivo)}` : "Solo versamenti";
+        if(c.obiettivo){ const pC=Math.max(0,Math.min(100,s/c.obiettivo*100));
+          barra = `<div class="bar"><i style="width:${pC}%"></i></div>`; }
+      }
+      return `<div class="row tap" data-edit="conto:${c.id}"><div class="l"><div class="t">${esc(c.nome)}</div>
+        ${sub?`<div class="s">${sub}</div>`:""}${barra}</div>
+        <div class="v ${s<-0.005?"neg":""}">${eur(s)}</div></div>`;
+    }).join("")}</div>`;
+  };
+  return `<div class="grid" style="margin-top:12px">
+    <div class="tile"><div class="s">Disponibile</div><div class="v">${eur(liq)}</div></div>
+    <div class="tile"><div class="s">Patrimonio netto</div><div class="v">${eur(liq-deb)}</div></div>
+  </div>
+  ${gruppo("conto","Conti")}
+  ${gruppo("carta","Carte di credito")}
+  ${gruppo("prepagata","Carte prepagate")}
+  ${gruppo("libretto","Libretto")}
+  ${gruppo("fondo","Fondo risparmio")}
+  <p class="note">Tocca un conto per impostare nome, saldo iniziale, plafond, giorno di addebito o obiettivo. Per saldare una carta o ricaricare la prepagata registra un giroconto dal conto.</p>
+  <div style="margin:12px 16px"><button class="btn sec" onclick="formConto()">Aggiungi conto o carta</button></div>`;
+}
+document.getElementById("app").addEventListener("click", e=>{ if(e.target.id==="k-new") formConto(); });
+
+/* ---------- SPESE FISSE ---------- */
+function vFisse(){
+  const att = attive();
+  const mensile = fisseMensili();
+  const annuo = att.reduce((a,f)=>a+(f.importo||0)*12/(CADENZE[f.cadenza]||1),0);
+  const oggi30 = Number(oggi().slice(8,10));
+  const lista = D.fisse.slice().sort((a,b)=>{
+    if(a.attiva!==b.attiva) return a.attiva?-1:1;
+    return (a.giorno||99)-(b.giorno||99);
+  });
+  return `<div class="grid" style="margin-top:12px">
+    <div class="tile"><div class="s">Al mese</div><div class="v">${eur(mensile)}</div></div>
+    <div class="tile"><div class="s">All'anno</div><div class="v">${eur(annuo)}</div></div></div>
+  <h2>Voci (${att.length} attive)</h2>
+  <div class="card">${lista.length?lista.map(f=>{
+    const g = Number(f.giorno)||0;
+    const vicina = f.attiva && g && g>=oggi30 && g-oggi30<=5;
+    return `<div class="row tap" data-edit="fissa:${f.id}" style="${f.attiva?"":"opacity:.45"}">
+      <div class="l"><div class="t">${esc(f.voce)}${vicina?" ·":""}</div>
+      <div class="s">${f.cadenza}${g?" · giorno "+g:""} · ${esc(conto(f.conto).nome)}${f.attiva?"":" · sospesa"}</div></div>
+      <div class="v">${eur(f.importo)}</div></div>`;
+  }).join(""):`<div class="empty">Aggiungi rata cellulare, telepass, abbonamenti…<br>Tocca + in basso.</div>`}</div>
+  <p class="note">Il punto · segnala una scadenza entro 5 giorni. Quando la voce viene addebitata, aprila e tocca "Registra addebito": il movimento finisce nei Movimenti con la data di oggi.</p>
+  <div style="margin:12px 16px"><button class="btn sec" id="s-new">Aggiungi spesa fissa</button></div>`;
+}
+document.getElementById("app").addEventListener("click", e=>{ if(e.target.id==="s-new") formFissa(); });
+
+/* ---------- BUDGET ---------- */
+function vBudget(){
+  const sp = speseMese(meseSel), fm = fisseMensili();
+  let totB=0, totS=0;
+  const righe = CAT_USCITA.map(c=>{
+    const b=n2(D.budget[c]), s=sp[c]||0, rim=b-s;
+    totB+=b; totS+=s;
+    const p = b>0 ? s/b*100 : 0;
+    const cls = p>100?"x":p>80?"w":"";
+    return `<div class="row"><div class="l">
+      <div class="t">${c}</div>
+      <div class="s">Speso ${eur(s)} · budget <input class="mini" type="number" inputmode="decimal" step="any" value="${b||""}" placeholder="0" data-b="${c}"></div>
+      ${b>0?`<div class="bar"><i class="${cls}" style="width:${Math.min(100,p)}%"></i></div>`:""}</div>
+      <div class="v ${b>0&&rim<0?"neg":""}">${b>0?eur(rim):""}</div></div>`;
+  }).join("");
+  setTimeout(()=>document.querySelectorAll("[data-b]").forEach(i=>{
+    i.onchange = () => { D.budget[i.dataset.b]=n2(i.value); salva(); render(); };
+  }),0);
+  // suggerimento: media spesa ultimi 3 mesi per categoria
+  const cat = CAT_USCITA.map(c=>{
+    let tot=0; for(let i=1;i<=3;i++) tot += speseMese(spostaMese(meseSel,-i))[c]||0;
+    return {c, media:tot/3};
+  }).filter(x=>x.media>1).sort((a,b)=>b.media-a.media).slice(0,4);
+  return `${meseBar()}
+  <div class="grid" style="margin-top:12px">
+    <div class="tile"><div class="s">Budget del mese</div><div class="v">${eur(totB)}</div></div>
+    <div class="tile"><div class="s">Rimasto</div><div class="v ${totB-totS<0?"neg":""}">${eur(totB-totS)}</div></div>
+    <div class="tile"><div class="s">Speso</div><div class="v">${eur(totS)}</div></div>
+    <div class="tile"><div class="s">Uso del budget</div><div class="v">${totB?Math.round(totS/totB*100):0}%</div></div>
+  </div>
+  <h2>Per categoria</h2><div class="card">${righe}</div>
+  <p class="note">Budget totale meno le spese fisse (${eur(fm)}): restano <b>${eur(totB-fm)}</b> per le spese variabili.</p>
+  ${cat.length?`<h2>Media ultimi 3 mesi</h2><div class="card">${cat.map(x=>`<div class="row"><div class="l"><div class="t">${x.c}</div><div class="s">Suggerimento per il budget</div></div><div class="v">${eur(x.media)}</div></div>`).join("")}</div>`:""}`;
+}
+
+/* ---------- MODALI ---------- */
+function apri(html){ document.getElementById("panel").innerHTML=html; document.getElementById("sheet").classList.add("on"); }
+function chiudi(){ document.getElementById("sheet").classList.remove("on"); }
+document.getElementById("sheet").onclick = e => { if(e.target.id==="sheet") chiudi(); };
+const opzConti = (sel,filtro=()=>true) => D.conti.filter(filtro).map(c=>
+  `<option value="${c.id}" ${c.id===sel?"selected":""}>${esc(c.nome)}</option>`).join("");
+const opzCat = (sel,cats) => cats.map(c=>`<option ${c===sel?"selected":""}>${c}</option>`).join("");
+const val = id => { const el=document.getElementById(id); return el?el.value:""; };
+
+/* --- menu principale --- */
+function formMenu(){
+  apri(`<h3>Impostazioni<button class="hbtn" onclick="chiudi()">Fine</button></h3>
+    <button class="btn" id="m-mov">Nuovo movimento</button>
+    <div style="margin-top:8px"><button class="btn sec" id="m-fis">Nuova spesa fissa</button></div>
+    <div style="margin-top:8px"><button class="btn sec" id="m-con">Nuovo conto o carta</button></div>
+    <label style="margin-top:22px">Dati</label>
+    <button class="btn sec" id="m-exp">Esporta backup completo (.json)</button>
+    <label style="margin-top:16px">Esporta in CSV (apribile in Excel o Numbers)</label>
+    <button class="btn sec" id="m-csv">Movimenti del mese</button>
+    <div style="margin-top:8px"><button class="btn sec" id="m-csv-tutti">Tutti i movimenti</button></div>
+    <div style="margin-top:8px"><button class="btn sec" id="m-csv-conti">Saldi dei conti</button></div>
+    <div style="margin-top:8px"><button class="btn sec" id="m-csv-fisse">Spese fisse</button></div>
+    <div style="margin-top:8px"><button class="btn sec" id="m-csv-budget">Budget</button></div>
+    <label style="margin-top:18px">Ripristina da backup</label>
+    <input type="file" id="m-imp" accept=".json,application/json">
+    <div style="margin-top:22px"><button class="btn del" id="m-reset">Cancella tutti i dati</button></div>
+    <p class="note" style="margin-top:16px">I dati restano solo su questo telefono. Il CSV si apre con Excel, Numbers o Google Fogli: i numeri usano la virgola e le colonne il punto e virgola, così Excel italiano li legge al primo colpo. Esporta un backup ogni tanto: cancellando i dati di Safari o l'app li perdi.</p>`);
+  const scarica=(nome,testo,tipo)=>{ const f=new File([testo],nome,{type:tipo});
+    if(navigator.canShare && navigator.canShare({files:[f]})) navigator.share({files:[f]}).catch(()=>{});
+    else { const a=document.createElement("a"); a.href=URL.createObjectURL(f); a.download=nome; a.click(); } };
+  document.getElementById("m-mov").onclick=()=>{ chiudi(); formMovimento(); };
+  document.getElementById("m-fis").onclick=()=>{ chiudi(); formFissa(); };
+  document.getElementById("m-con").onclick=()=>{ chiudi(); formConto(); };
+  document.getElementById("m-exp").onclick=()=>scarica(`finanze-backup-${oggi()}.json`,JSON.stringify(D,null,1),"application/json");
+  // CSV: separatore ; e numeri con la virgola, come li legge Excel italiano
+  const q = s => `"${String(s??"").replace(/"/g,'""')}"`;
+  const num = v => (Math.round((v||0)*100)/100).toFixed(2).replace(".",",");
+  const csv = (intestazioni,righe) => [intestazioni.join(";")]
+    .concat(righe.map(r=>r.join(";"))).join("\r\n");
+  const movCSV = lista => csv(["Data","Tipo","Descrizione","Categoria","Conto","Da","A","Importo (EUR)"],
+    lista.map(m=>[dataIT(m.data), m.tipo, q(m.descrizione), q(m.categoria),
+      q(m.conto?conto(m.conto).nome:""), q(m.da?conto(m.da).nome:""), q(m.a?conto(m.a).nome:""),
+      num(m.importo)]));
+  document.getElementById("m-csv").onclick=()=>{
+    const lista=D.movimenti.filter(m=>nelMese(m,meseSel)).sort((a,b)=>a.data.localeCompare(b.data));
+    if(!lista.length){ alert(`Nessun movimento in ${nomeMese(meseSel)}.`); return; }
+    scarica(`movimenti-${meseSel}.csv`,"\ufeff"+movCSV(lista),"text/csv");
+  };
+  document.getElementById("m-csv-tutti").onclick=()=>{
+    if(!D.movimenti.length){ alert("Non ci sono ancora movimenti da esportare."); return; }
+    const lista=D.movimenti.slice().sort((a,b)=>a.data.localeCompare(b.data));
+    scarica(`movimenti-tutti-${oggi()}.csv`,"\ufeff"+movCSV(lista),"text/csv");
+  };
+  document.getElementById("m-csv-conti").onclick=()=>{
+    const testo=csv(["Conto","Tipo","Saldo iniziale (EUR)","Saldo attuale (EUR)"],
+      D.conti.map(c=>[q(c.nome), q(TIPI[c.tipo]||c.tipo), num(c.iniziale), num(saldo(c.id))]));
+    scarica(`saldi-conti-${oggi()}.csv`,"\ufeff"+testo,"text/csv");
+  };
+  document.getElementById("m-csv-fisse").onclick=()=>{
+    if(!D.fisse.length){ alert("Non hai ancora spese fisse da esportare."); return; }
+    const testo=csv(["Voce","Categoria","Importo (EUR)","Cadenza","Conto di addebito","Giorno di scadenza","Stato","Al mese (EUR)","All'anno (EUR)"],
+      D.fisse.map(f=>{ const m=(CADENZE[f.cadenza]||1);
+        return [q(f.voce), q(f.categoria), num(f.importo), q(f.cadenza),
+          q(conto(f.conto).nome), f.giorno||"", f.attiva?"Attiva":"Sospesa",
+          num(f.attiva?f.importo/m:0), num(f.attiva?f.importo*12/m:0)]; }));
+    scarica(`spese-fisse-${oggi()}.csv`,"\ufeff"+testo,"text/csv");
+  };
+  document.getElementById("m-csv-budget").onclick=()=>{
+    const sp=speseMese(meseSel);
+    const testo=csv(["Categoria","Budget mensile (EUR)",`Speso in ${nomeMese(meseSel)} (EUR)`,"Rimasto (EUR)","Uso (%)"],
+      CAT_USCITA.map(c=>{ const b=n2(D.budget[c]), sp2=sp[c]||0;
+        return [q(c), num(b), num(sp2), num(b-sp2), b>0?String(Math.round(sp2/b*100)):"0"]; }));
+    scarica(`budget-${meseSel}.csv`,"\ufeff"+testo,"text/csv");
+  };
+  document.getElementById("m-imp").onchange=e=>{ const f=e.target.files[0]; if(!f)return;
+    f.text().then(t=>{ try{ const n=JSON.parse(t); if(!n.conti||!n.movimenti) throw 0;
+      if(confirm("Sostituire i dati attuali con il backup?")){ D=n; salva(); chiudi(); render(); } }catch(_){ alert("File di backup non valido."); } }); };
+  document.getElementById("m-reset").onclick=()=>{ if(confirm("Cancellare davvero tutti i dati?")){ D=defaultData(); salva(); chiudi(); render(); } };
+}
+
+/* --- movimento --- */
+function formMovimento(id){
+  const m = D.movimenti.find(x=>x.id===id) ||
+    {tipo:"uscita",data:oggi(),conto:"cc",da:"cc",a:"lib",categoria:"Spesa alimentare"};
+  let tipo = m.tipo;
+  const corpo = () => {
+    const cats = tipo==="entrata" ? CAT_ENTRATA : CAT_USCITA;
+    return `<label>Importo (€)</label><input id="f-imp" type="number" inputmode="decimal" step="any" value="${m.importo??""}" placeholder="0,00">
+    <label>Data</label><input id="f-data" type="date" value="${m.data}">
+    <label>Descrizione</label><input id="f-desc" value="${esc(m.descrizione||"")}" placeholder="facoltativa">
+    ${tipo==="giroconto" ? `
+      <label>Da</label><select id="f-da">${opzConti(m.da,c=>c.tipo!=="fondo")}</select>
+      <label>A</label><select id="f-a">${opzConti(m.a)}</select>
+      <p class="note" style="margin:8px 2px">Il giroconto sposta denaro tra due contenitori e non conta come entrata o uscita. Usalo per libretto, fondo, ricarica della prepagata e per saldare le carte.</p>`
+    : `<label>Categoria</label><select id="f-cat">${opzCat(m.categoria,cats)}</select>
+      <label>Conto o carta</label><select id="f-conto">${opzConti(m.conto,c=>c.tipo!=="fondo")}</select>`}`;
+  };
+  const draw = () => apri(`<h3>${id?"Modifica":"Nuovo"} movimento<button class="hbtn" onclick="chiudi()">Annulla</button></h3>
+    <div class="seg" id="f-tipo">${["uscita","entrata","giroconto"].map(t=>
+      `<button data-t="${t}" class="${t===tipo?"on":""}">${t[0].toUpperCase()+t.slice(1)}</button>`).join("")}</div>
+    <div id="f-corpo">${corpo()}</div>
+    <div style="margin-top:18px"><button class="btn" id="f-ok">Salva</button></div>
+    ${id?`<div style="margin-top:8px"><button class="btn del" id="f-del">Elimina movimento</button></div>`:""}`);
+  const wire = () => {
+    document.getElementById("f-tipo").onclick = e => {
+      const b=e.target.closest("button"); if(!b) return;
+      tipo = b.dataset.t;
+      if(tipo==="entrata" && !CAT_ENTRATA.includes(m.categoria)) m.categoria="Stipendio";
+      if(tipo==="uscita" && !CAT_USCITA.includes(m.categoria)) m.categoria="Spesa alimentare";
+      m.importo = n2(val("f-imp")) || m.importo;
+      m.data = val("f-data") || m.data; m.descrizione = val("f-desc");
+      draw(); wire();
+    };
+    document.getElementById("f-ok").onclick = () => {
+      const imp = n2(val("f-imp"));
+      if(!(imp>0)){ alert("Inserisci un importo maggiore di zero."); return; }
+      const n = {id:m.id||uid(),tipo,importo:imp,data:val("f-data")||oggi(),descrizione:val("f-desc").trim()};
+      if(tipo==="giroconto"){
+        n.da=val("f-da"); n.a=val("f-a");
+        if(n.da===n.a){ alert("Scegli due conti diversi."); return; }
+      } else { n.categoria=val("f-cat"); n.conto=val("f-conto"); }
+      const i=D.movimenti.findIndex(x=>x.id===n.id);
+      if(i>=0) D.movimenti[i]=n; else D.movimenti.push(n);
+      salva(); chiudi(); meseSel=n.data.slice(0,7); render();
+    };
+    const del=document.getElementById("f-del");
+    if(del) del.onclick=()=>{ if(confirm("Eliminare il movimento?")){ D.movimenti=D.movimenti.filter(x=>x.id!==id); salva(); chiudi(); render(); } };
+  };
+  draw(); wire();
+}
+
+/* --- spesa fissa --- */
+function formFissa(id){
+  const f = D.fisse.find(x=>x.id===id) ||
+    {voce:"",importo:"",cadenza:"Mensile",conto:"cc",categoria:"Telefonia",giorno:"",attiva:true};
+  apri(`<h3>${id?"Modifica":"Nuova"} spesa fissa<button class="hbtn" onclick="chiudi()">Annulla</button></h3>
+    <label>Voce</label><input id="s-voce" value="${esc(f.voce)}" placeholder="es. Rata cellulare">
+    <label>Importo (€)</label><input id="s-imp" type="number" inputmode="decimal" step="any" value="${f.importo}" placeholder="0,00">
+    <label>Cadenza</label><select id="s-cad">${Object.keys(CADENZE).map(c=>`<option ${c===f.cadenza?"selected":""}>${c}</option>`).join("")}</select>
+    <label>Categoria</label><select id="s-cat">${opzCat(f.categoria,CAT_USCITA)}</select>
+    <label>Conto di addebito</label><select id="s-conto">${opzConti(f.conto,c=>c.tipo!=="fondo")}</select>
+    <label>Giorno di scadenza</label><input id="s-g" type="number" inputmode="numeric" min="1" max="31" value="${f.giorno}" placeholder="es. 15">
+    <label>Stato</label><select id="s-att">
+      <option value="1" ${f.attiva?"selected":""}>Attiva</option>
+      <option value="0" ${f.attiva?"":"selected"}>Sospesa</option></select>
+    <div style="margin-top:18px"><button class="btn" id="s-ok">Salva</button></div>
+    ${id?`<div style="margin-top:8px"><button class="btn sec" id="s-reg">Registra addebito di oggi</button></div>
+           <div style="margin-top:8px"><button class="btn del" id="s-del">Elimina</button></div>`:""}`);
+  const leggi = () => ({id:f.id||uid(),voce:val("s-voce").trim()||"Spesa fissa",importo:n2(val("s-imp")),
+    cadenza:val("s-cad"),categoria:val("s-cat"),conto:val("s-conto"),giorno:val("s-g"),attiva:val("s-att")==="1"});
+  document.getElementById("s-ok").onclick=()=>{
+    const n=leggi(); if(!(n.importo>0)){ alert("Inserisci un importo."); return; }
+    const i=D.fisse.findIndex(x=>x.id===n.id); if(i>=0) D.fisse[i]=n; else D.fisse.push(n);
+    salva(); chiudi(); render();
+  };
+  if(id){
+    document.getElementById("s-reg").onclick=()=>{
+      const n=leggi();
+      D.movimenti.push({id:uid(),tipo:"uscita",importo:n.importo,data:oggi(),
+        descrizione:n.voce,categoria:n.categoria,conto:n.conto});
+      salva(); chiudi(); meseSel=oggi().slice(0,7); render();
+      alert(`${n.voce}: addebito registrato nei movimenti.`);
+    };
+    document.getElementById("s-del").onclick=()=>{ if(confirm("Eliminare questa spesa fissa?")){ D.fisse=D.fisse.filter(x=>x.id!==id); salva(); chiudi(); render(); } };
+  }
+}
+
+/* --- conto --- */
+function formConto(id){
+  const c = D.conti.find(x=>x.id===id) || {nome:"",tipo:"conto",iniziale:0};
+  const nuovo = !id;
+  apri(`<h3>${nuovo?"Nuovo conto":esc(c.nome)}<button class="hbtn" onclick="chiudi()">Annulla</button></h3>
+    <label>Nome</label><input id="k-nome" value="${esc(c.nome)}" placeholder="es. Carta BCC">
+    ${nuovo?`<label>Tipo</label><select id="k-tipo">
+      <option value="conto">Conto</option>
+      <option value="carta">Carta di credito</option>
+      <option value="prepagata">Carta prepagata</option>
+      <option value="libretto">Libretto</option>
+      <option value="fondo">Fondo risparmio</option></select>`:
+      `<p class="note" style="margin:6px 2px">Tipo: ${TIPI[c.tipo]||c.tipo}</p>`}
+    <label>Saldo iniziale (€)</label><input id="k-ini" type="number" inputmode="decimal" step="any" value="${c.iniziale||""}" placeholder="0,00">
+    ${c.tipo==="prepagata"?`<p class="note" style="margin:6px 2px">Il saldo è quanto hai caricato: scrivilo positivo.</p>`:""}
+    ${c.tipo==="carta"?`<p class="note" style="margin:6px 2px">Per una carta il debito iniziale va scritto in negativo (es. −120).</p>
+      <label>Plafond (€)</label><input id="k-pla" type="number" inputmode="decimal" step="any" value="${c.plafond||""}" placeholder="facoltativo">`:""}
+    ${c.tipo==="fondo"?`<p class="note" style="margin:6px 2px">Il fondo è solo in entrata: si versa, non si preleva.</p>
+      <label>Obiettivo del fondo (€)</label><input id="k-obi" type="number" inputmode="decimal" step="any" value="${c.obiettivo||""}" placeholder="facoltativo">`:""}
+    <div style="margin-top:18px"><button class="btn" id="k-ok">Salva</button></div>
+    ${!nuovo?`<div style="margin-top:8px"><button class="btn del" id="k-del">Elimina</button></div>`:""}`);
+  document.getElementById("k-ok").onclick=()=>{
+    const n = {...c, id:c.id||uid(), nome:val("k-nome").trim()||"Conto", iniziale:n2(val("k-ini"))};
+    if(nuovo) n.tipo=val("k-tipo");
+    if(document.getElementById("k-pla")) n.plafond = n2(val("k-pla")) || null;
+    if(document.getElementById("k-gio")) n.giorno = Math.min(31, Math.max(1, Math.round(n2(val("k-gio"))))) || null;
+    if(document.getElementById("k-da")) n.da = val("k-da");
+    if(document.getElementById("k-obi")) n.obiettivo = n2(val("k-obi")) || null;
+    const i=D.conti.findIndex(x=>x.id===n.id); if(i>=0) D.conti[i]=n; else D.conti.push(n);
+    salva(); chiudi(); render();
+  };
+  const del=document.getElementById("k-del");
+  if(del) del.onclick=()=>{
+    if(D.movimenti.some(m=>m.conto===id||m.da===id||m.a===id)){ alert("Ci sono movimenti su questo conto: eliminali prima."); return; }
+    if(confirm("Eliminare questo conto?")){ D.conti=D.conti.filter(x=>x.id!==id); salva(); chiudi(); render(); }
+  };
+}
+
+render();
+</script>
+</body>
+</html>
